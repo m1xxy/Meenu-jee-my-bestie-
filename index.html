@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You Meenu jee 🌹</title>
+    
+    <!-- External Libraries (CDNs) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Satoshi:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 CORE VARIABLES & RESET */
+        :root {
+            --rose-primary: #e11d48;
+            --rose-soft: #fda4af;
+            --lavender: #c084fc;
+            --gold: #fde047;
+            --bg-dark: #0c0a09;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Satoshi', sans-serif;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* 🌌 LAYER 1: AURORA BACKGROUND */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: breathe 10s infinite ease-in-out alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: hsla(340, 70%, 60%, 0.25); animation-duration: 12s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: hsla(270, 60%, 60%, 0.2); animation-duration: 15s; }
+        .blob-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: hsla(25, 90%, 70%, 0.15); animation-duration: 18s; }
+
+        @keyframes breathe {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.2) translate(20px, -20px); }
+        }
+
+        /* 🌹 LAYER 2: CANVAS PETALS */
+        #petalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 🪞 GLASSMORPHISM CARDS */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 28px;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .bento-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+        .bento-item:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+        .bento-full { grid-column: span 2; }
+        
+        .bento-title { font-size: 0.9rem; color: var(--rose-soft); font-weight: 700; margin-bottom: 4px; display: block; }
+        .bento-text { font-size: 0.85rem; color: #d1d5db; line-height: 1.4; }
+
+        /* 🖼 POLAROID STYLE */
+        .polaroid-wrapper {
+            perspective: 1000px;
+            margin: 20px auto;
+            width: 220px;
+            cursor: pointer;
+        }
+        .polaroid {
+            background: white;
+            padding: 12px 12px 40px 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: rotate(-3deg);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .polaroid:hover {
+            transform: rotate(2deg) scale(1.05);
+            z-index: 10;
+        }
+        .polaroid-img {
+            background: #eee;
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 2rem;
+        }
+        .polaroid-caption {
+            color: #333;
+            font-family: 'Playfair Display', serif; /* Handwritten feel */
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* 🔘 IOS STYLE BUTTONS */
+        .btn-ios {
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.8), rgba(253, 164, 175, 0.6));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-ios::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
+            border-radius: 50px 50px 0 0;
+        }
+
+        .btn-ios:hover {
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(225, 29, 72, 0.5);
+        }
+
+        .btn-ios:active {
+            transform: scale(0.98);
+        }
+
+        /* 📊 PROGRESS BAR */
+        .progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 28px 28px 0 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(90deg, #e11d48, #fda4af);
+            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* ✍️ TYPOGRAPHY UTILS */
+        .gradient-text {
+            background: linear-gradient(to right, #fff, #fda4af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hidden-step {
+            display: none;
+            opacity: 0;
+        }
+
+        /* 🎵 SPOTIFY SECTION */
+        .music-player {
+            margin-top: 2rem;
+            width: 90%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .music-label {
+            font-size: 0.8rem;
+            color: #fda4af;
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🌌 Backgrounds -->
+    <div class="aurora-bg">
+        <div class="aurora-blob blob-1"></div>
+        <div class="aurora-blob blob-2"></div>
+        <div class="aurora-blob blob-3"></div>
+    </div>
+    <canvas id="petalCanvas"></canvas>
+
+    <!-- 🪞 Main Interface -->
+    <main id="main-container">
+        
+        <div class="glass-card">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <!-- 🌸 Step 1: Welcome -->
+            <div id="step-1" class="step-content">
+                <div class="text-5xl mb-4 animate-pulse">🌹</div>
+                <h1 class="text-3xl mb-4 font-bold gradient-text">Hey Meenu jee 💗</h1>
+                <p class="text-lg text-gray-200 leading-relaxed mb-6">
+                    Aj main kuch special likh raha hoon sirf tumhare liye. Kyunki tum sirf meri best friend nahi ho... tum meri life ka ek bohat important hissa ho.
+                </p>
+                <button class="btn-ios" onclick="nextStep(2)">Continue...</button>
+            </div>
+
+            <!-- ✨ Step 2: Gratitude -->
+            <div id="step-2" class="step-content hidden-step">
+                <div class="text-5xl mb-4 text-yellow-300">✨</div>
+                <h1 class="text-3xl mb-4 font-bold gradient-text">Thank You For Being You</h1>
+                <p class="text-lg text-gray-200 leading-relaxed mb-6">
+                    Thank you for listening, for caring, for staying. For every late-night talk, every silly joke, every <span class="italic text-rose-300">"main hoon na"</span>. Tumhari dosti mere liye ek blessing hai.
+                </p>
+                <button class="btn-ios" onclick="nextStep(3)">There’s more...</button>
+            </div>
+
+            <!-- 🍱 Step 3: Bento Grid -->
+            <div id="step-3" class="step-content hidden-step">
+                <h1 class="text-2xl mb-2 font-bold gradient-text">Why I’m Grateful</h1>
+                
+                <div class="bento-grid">
+                    <div class="bento-item bento-full">
+                        <span class="bento-title">🌷 Your Loyalty</span>
+                        <span class="bento-text">You never leave. No matter what mood, what situation — you stay.</span>
+                    </div>
+                    <div class="bento-item">
+                        <span class="bento-title">😂 Your Drama</span>
+                        <span class="bento-text">Thori si overacting... lekin meri favourite.</span>
+                    </div>
+                    <div class="bento-item">
+                        <span class="bento-title">🤫 Secrets</span>
+                        <span class="bento-text">Safe with you. Always.</span>
+                    </div>
+                    <div class="bento-item bento-full">
+                        <span class="bento-title">💖 Your Pure Heart</span>
+                        <span class="bento-text">Tumhara dil bohat saaf hai. Aur aaj kal aise log bohat kam milte hain.</span>
+                    </div>
+                </div>
+
+                <button class="btn-ios" onclick="nextStep(4)">Remember this...</button>
+            </div>
+
+            <!-- 🖼 Step 4: Memory -->
+            <div id="step-4" class="step-content hidden-step">
+                <h1 class="text-2xl mb-4 font-bold gradient-text">Our Beautiful Friendship</h1>
+                
+                <div class="polaroid-wrapper">
+                    <div class="polaroid">
+                        <div class="polaroid-img">👯‍♀️</div>
+                        <div class="polaroid-caption">Best Friends Forever 💗</div>
+                    </div>
+                </div>
+
+                <p class="text-md text-gray-200 leading-relaxed mb-6 mt-4">
+                    Hamari friendship ke har din mein ek nayi story hoti hai. Aur mujhe har ek moment cherish hai.
+                </p>
+                <button class="btn-ios" onclick="nextStep(5)">One Last Thing...</button>
+            </div>
+
+            <!-- 💐 Step 5: Final Wish -->
+            <div id="step-5" class="step-content hidden-step">
+                <div class="text-5xl mb-4">💐</div>
+                <h1 class="text-3xl mb-4 font-bold gradient-text">My Wish For Us</h1>
+                <p class="text-lg text-gray-200 leading-relaxed mb-6">
+                    Main bas yeh chahta hoon ke hum hamesha aise hi rahein. Laugh karein. Share karein. Support karein. Aur ek dusre ke life mein hamesha special rahein.
+                </p>
+                
+                <div id="final-message" class="hidden mt-4 mb-6">
+                    <p class="text-xl font-playfair text-rose-300 animate-bounce">
+                        Thank you for being my best friend, Meenu jee 🌹
+                    </p>
+                </div>
+
+                <button id="final-btn" class="btn-ios" onclick="triggerFinale()">Forever Besties</button>
+            </div>
+
+        </div>
+
+        <!-- 🎵 Music Section -->
+        <div class="music-player" id="spotify-section">
+            <div class="music-label">This song is for you 💗</div>
+            <div style="border-radius: 12px; overflow: hidden;">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6RiiSy9GzSwiyDEJDiMuKe?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+            <div class="music-label" style="margin-top:8px; font-size: 0.7rem; opacity:0.7;">Every note says what my heart can't.</div>
+        </div>
+
+    </main>
+
+    <script>
+        // 🌹 PETAL ANIMATION ENGINE (Canvas)
+        const canvas = document.getElementById('petalCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let petals = [];
+        let finaleMode = false;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Petal {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height * -1; // Start above screen
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -20;
+                this.size = Math.random() * 10 + 5;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+                this.color = `hsla(${340 + Math.random() * 20}, 80%, 70%, ${0.3 + Math.random() * 0.4})`;
+            }
+
+            update() {
+                if (finaleMode) {
+                    this.speedY -= 0.05; // Gravity reverse
+                    this.y += this.speedY;
+                    this.x += Math.sin(this.y * 0.01) * 2;
+                } else {
+                    this.y += this.speedY;
+                    this.x += Math.sin(this.y * 0.005) * 0.5 + this.speedX * 0.1;
+                }
+                
+                this.rotation += this.rotationSpeed;
+
+                // Reset if out of bounds (unless finale mode where they fly up)
+                if (!finaleMode && this.y > height) this.reset();
+                if (finaleMode && this.y < -50) this.y = height + 50; // Wrap around for infinite updraft
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                // Draw a simple petal shape using curves
+                ctx.bezierCurveTo(this.size / 2, -this.size / 2, this.size, 0, 0, this.size);
+                ctx.bezierCurveTo(-this.size, 0, -this.size / 2, -this.size / 2, 0, 0);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Init petals
+        for(let i=0; i<40; i++) petals.push(new Petal());
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animatePetals);
+        }
+        animatePetals();
+
+        // 🧠 STEP LOGIC (GSAP)
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function nextStep(stepNumber) {
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            const nextEl = document.getElementById(`step-${stepNumber}`);
+            
+            // Progress Bar Update
+            const progressPct = (stepNumber / totalSteps) * 100;
+            document.getElementById('progress').style.width = `${progressPct}%`;
+
+            // Reveal Music Player on first click if not visible
+            if(stepNumber === 2) {
+                gsap.to("#spotify-section", {opacity: 1, y: 0, duration: 1.5, delay: 0.5});
+            }
+
+            // Timeline Transition
+            const tl = gsap.timeline();
+
+            // 1. Exit Current
+            tl.to(currentEl, {
+                opacity: 0,
+                y: -20,
+                duration: 0.5,
+                ease: "power2.in",
+                onComplete: () => {
+                    currentEl.classList.add("hidden-step");
+                    nextEl.classList.remove("hidden-step");
+                }
+            });
+
+            // 2. Enter Next
+            tl.fromTo(nextEl, 
+                { opacity: 0, y: 30, scale: 0.95 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.2)" }
+            );
+
+            // Stagger internal elements of the next slide
+            tl.fromTo(`#step-${stepNumber} > *`, 
+                { opacity: 0, y: 10 },
+                { opacity: 1, y: 0, stagger: 0.1, duration: 0.5 },
+                "-=0.4"
+            );
+
+            currentStep = stepNumber;
+        }
+
+        // 🎉 GRAND FINALE
+        function triggerFinale() {
+            const btn = document.getElementById('final-btn');
+            const finalMsg = document.getElementById('final-message');
+            
+            // 1. UI Changes
+            gsap.to(btn, { opacity: 0, scale: 0.8, pointerEvents: 'none', duration: 0.5 });
+            finalMsg.classList.remove('hidden');
+            gsap.from(finalMsg, { opacity: 0, y: 20, duration: 1 });
+
+            // 2. Petal Updraft
+            finaleMode = true; // Switches physics in the loop
+
+            // 3. Confetti Explosion
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                const particleCount = 50 * (timeLeft / duration);
+                // Rose & Gold Confetti
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#e11d48', '#fde047', '#ffffff']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#fda4af', '#e11d48']
+                }));
+            }, 250);
+
+            // 4. Aurora Intensity
+            gsap.to('.aurora-blob', { filter: 'blur(60px)', opacity: 0.6, duration: 3 });
+        }
+
+    </script>
+</body>
+</html>
